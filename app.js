@@ -83,5 +83,41 @@ const obtenerSeriesP = async () => {
     }
 };
 
+const crearTarjeta = (serie) => {
+    const { id, name, first_air_date, vote_average, poster_path } = serie;
+    const año = first_air_date ? first_air_date.split('-')[0]:'N/A';
+    const imagen = poster_path ? `${IMAGE_URL}${poster_path}`: '';
+    const rating = vote_average ? vote_average.toFixed(1): 'N/A';
+    return `
+        <article class="serie-card" data-id="${id}">
+            <div class="serie-card__poster">
+                <img 
+                    class="serie-card__image" 
+                    src="${imagen}" 
+                    alt="${name}">
+                <span class="serie-card__rating">
+                         ${rating}
+                </span>
+            </div>
+
+            <div class="serie-card__content">
+                <h3 class="serie-card__title">${name}</h3>
+                <p class="serie-card__year">${año}</p>
+            </div>
+        </article>
+    `;
+};
+
+const mostrar = (series) => {
+    seriesGrid.innerHTML = series.map(serie => crearTarjeta(serie)).join('');
+    const tarjetas = document.querySelectorAll('.serie-card');
+    tarjetas.forEach(tarjeta => {
+        tarjeta.addEventListener('click', () => {
+            const id = tarjeta.dataset.id;
+            obtenerDetalleSerie(id);
+        });
+    });
+};
+
 
 obtenerSeriesP();
