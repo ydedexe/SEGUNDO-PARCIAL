@@ -118,6 +118,29 @@ const mostrar = (series) => {
         });
     });
 };
-
-
+const buscarSeries = async (texto) => {
+    if (texto.trim() === '') {
+        obtenerSeriesP();
+        return;
+    }
+    mostrarLoading();
+    try {
+        const busqueda = encodeURIComponent(texto);
+        const url = `${BASE_URL}/search/tv?api_key=${API_KEY}&query=${busqueda}&language=es-ES`;
+        const respuesta = await fetch(url);
+        if (respuesta.status === 401) {
+            throw new Error('401');
+        }
+        if (!respuesta.ok) {
+            throw new Error('Error');
+        }
+        const datos = await respuesta.json();
+        mostrar(datos.results);
+        resultsTitle.textContent = `Resultados para: ${texto}`;
+        resultsCount.textContent = `${datos.results.length} resultados`;
+        ocultarLoading();
+    } catch (error) {
+        manejoErrores(error);
+    }
+};
 obtenerSeriesP();
