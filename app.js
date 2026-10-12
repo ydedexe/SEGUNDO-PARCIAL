@@ -143,4 +143,46 @@ const buscarSeries = async (texto) => {
         manejoErrores(error);
     }
 };
+
+const obtenerDetalleSerie = async (id) => {
+    try {
+        const url = `${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=es-ES`;
+        const respuesta = await fetch(url);
+        if (respuesta.status === 401) {
+            throw new Error('401');
+        }
+        if (!respuesta.ok) {
+            throw new Error('Error');
+        }
+        const serie = await respuesta.json();
+        mostrarModal(serie);
+    } catch (error) {
+        manejarError(error);
+    }
+};
+
+const mostrarDetalles = (serie) => {
+    const generos = serie.genres.length > 0 ? serie.genres.map(genero => genero.name).join(', '): 'N/A';
+    modal.innerHTML = `
+        <h2 class="modal__title">${serie.name}</h2>
+        <p class="modal__subtitle">
+            ${serie.first_air_date || 'Fecha no disponible'}
+        </p>
+        <div class="modal__info">
+            <span>Temporadas: ${serie.number_of_seasons}</span>
+            <span>Episodios: ${serie.number_of_episodes}</span>
+            <span>Estado: ${serie.status}</span>
+        </div>
+        <p><strong>Géneros:</strong> ${generos}</p>
+        <p class="modal__overview">
+            ${serie.overview || 'sin sinopsis disponible'}
+        </p>
+    `;
+    modal.classList.add('modal--show');
+};
+const cerrarModal = () => {
+    modal.classList.remove('modal--show');
+};
+
+
 obtenerSeriesP();
