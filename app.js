@@ -157,7 +157,7 @@ const obtenerDetalleSerie = async (id) => {
         const serie = await respuesta.json();
         mostrarModal(serie);
     } catch (error) {
-        manejarError(error);
+        manejarErrores(error);
     }
 };
 
@@ -184,5 +184,28 @@ const cerrarModal = () => {
     modal.classList.remove('modal--show');
 };
 
+const manejoErrores = (error) => {
+    if (error.message === '401') {
+        mostrarError('APY Key imvalida');
+    } else {
+        mostrarError('Error de conexion');
+    }
+};
+
+searchInput.addEventListener('input', () => {
+    buscarSeries(searchInput.value);
+});
+
+clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    obtenerSeriesP();
+});
+
+retryBtn.addEventListener('click', () => {
+    obtenerSeriesP();
+});
+
+modalClose.addEventListener('click', cerrarModal);
+modalOverlay.addEventListener('click', cerrarModal);
 
 obtenerSeriesP();
